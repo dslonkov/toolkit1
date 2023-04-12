@@ -1,56 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import React, {useEffect} from 'react';
 import './App.css';
+import {useDispatch, useSelector} from "react-redux";
+import {changeValue, showFacts, reloadData} from "./app/factReducer";
+
 
 function App() {
+
+  const name = useSelector(state => state.value)
+  const facts = useSelector(state => state.data)
+  const reload = useSelector(state => state.reloadData)
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    dispatch(changeValue(e.target.value))
+    dispatch(showFacts(name))
+  }
+
+  useEffect(() => {
+    if (name === '') {
+      dispatch(reloadData(reload))
+    }
+  }, [name,reload, dispatch])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+        <input value={name} onChange={handleChange} type="text" className="input"/>
+
+      <ul>
+        {
+          name >= 1 && name <= 5 ?
+            facts.map(item => {
+                return (
+                  <li style={{marginBottom: '10px'}} key={item}>{item}</li>
+                )
+              }
+            )
+            : null
+        }
+      </ul>
     </div>
   );
 }
